@@ -1,3 +1,8 @@
+---
+name: Bug report
+about: Reportar um problema no sistema
+---
+
 # Descrição do problema
 
 Por favor, descreva o problema ou a dúvida.

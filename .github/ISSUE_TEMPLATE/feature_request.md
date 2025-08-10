@@ -1,3 +1,8 @@
+---
+name: Feature request
+about: Solicitar uma nova funcionalidade
+---
+
 \# Proposta de funcionalidade
 
 
