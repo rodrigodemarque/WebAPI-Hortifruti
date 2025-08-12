@@ -25,50 +25,6 @@ namespace WebAPI_Hortifruti.Repositories.SQLServer
             CacheExpirationTime = 30;
         }
         
-
-        public async Task AddASync(Models.Fruta fruta)
-        {
-            using (conn)
-            {
-                await conn.OpenAsync();
-
-                using (cmd)
-                {
-                    cmd.CommandText = "insert into Frutas (Nome, DataVenc) values (@nome, @datavenc); select scope_identity();";
-                    cmd.Parameters.Add(new SqlParameter("@nome", SqlDbType.VarChar)).Value = fruta.Nome;
-                    cmd.Parameters.Add(new SqlParameter("@datavenc", SqlDbType.Date)).Value = fruta.DataVenc;
-
-                    fruta.Id = Convert.ToInt32(await cmd.ExecuteScalarAsync());
-
-                    cacheService.Remove(KeyCache);
-                }
-            }
-        }
-
-        public async Task<bool> DeleteAsync(int id)
-        {
-            int linhasAfetadas = 0;
-
-            using (conn)
-            {
-                await conn.OpenAsync();
-
-                using (cmd)
-                {
-                    cmd.CommandText = "delete from Frutas where Id = @id";
-                    cmd.Parameters.Add(new SqlParameter("@id", SqlDbType.Int)).Value = id;
-
-                    linhasAfetadas = await cmd.ExecuteNonQueryAsync();
-
-
-                }
-            }
-            if (linhasAfetadas == 0)
-                return false;
-            cacheService.Remove(KeyCache);
-            return true;
-        }
-
         public async Task<List<Models.Fruta>> GetAllAsync()
         {
             List<Models.Fruta> frutas;
@@ -142,6 +98,25 @@ namespace WebAPI_Hortifruti.Repositories.SQLServer
             return frutas;
         }
 
+        public async Task AddASync(Models.Fruta fruta)
+        {
+            using (conn)
+            {
+                await conn.OpenAsync();
+
+                using (cmd)
+                {
+                    cmd.CommandText = "insert into Frutas (Nome, DataVenc) values (@nome, @datavenc); select scope_identity();";
+                    cmd.Parameters.Add(new SqlParameter("@nome", SqlDbType.VarChar)).Value = fruta.Nome;
+                    cmd.Parameters.Add(new SqlParameter("@datavenc", SqlDbType.Date)).Value = fruta.DataVenc;
+
+                    fruta.Id = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+
+                    cacheService.Remove(KeyCache);
+                }
+            }
+        }
+
         public async Task<bool> UpdateAsync(Models.Fruta fruta)
         {
             int linhasAfetadas = 0;
@@ -167,6 +142,31 @@ namespace WebAPI_Hortifruti.Repositories.SQLServer
             cacheService.Remove(KeyCache);
             return true;
         }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            int linhasAfetadas = 0;
+
+            using (conn)
+            {
+                await conn.OpenAsync();
+
+                using (cmd)
+                {
+                    cmd.CommandText = "delete from Frutas where Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", SqlDbType.Int)).Value = id;
+
+                    linhasAfetadas = await cmd.ExecuteNonQueryAsync();
+
+
+                }
+            }
+            if (linhasAfetadas == 0)
+                return false;
+            cacheService.Remove(KeyCache);
+            return true;
+        }
+
 
         private void Mapper(Models.Fruta fruta, SqlDataReader dr)
         {
